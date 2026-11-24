@@ -169,12 +169,9 @@ All bodies are JSON. State-changing requests from browsers must be same-origin. 
 
 The app needs a Node.js host and PostgreSQL, for example Vercel (or any Node host) with Neon or Supabase.
 
-1. Create a PostgreSQL database and copy its connection string.
-2. Set the environment variables above on the host (`APP_URL` must be the public https URL, `PAYMENT_WEBHOOK_SECRET` a fresh random value).
-3. Build with `npm run build`, start with `npm start` (Vercel detects this automatically).
-4. From a machine that can reach the database, run `npm run db:migrate`, then `npm run db:seed` if you want the sample catalog, then `npm run admin:create`.
+The production app is deployed on Vercel and uses Neon PostgreSQL. Production configuration is stored in Vercel environment variables; no database URL or payment secret is committed to this repository. The production provider is the sandbox, and `APP_URL` is configured for the public HTTPS domain. The live homepage, catalog, product detail, login/registration pages, product API, and name search were checked; the live catalog API returned 12 products.
 
-No live demo URL is available yet. Deployment requires an authorized Vercel project and the real Neon connection string, which are not present in this workspace. Do not treat a local build as a live deployment.
+The live database was already serving catalog data, so this release did not run migration, seed, reset, or administrator-creation commands. Database-backed catalog reads are confirmed, but an authenticated checkout, sandbox payment, order confirmation, and administrator workflow were not completed in production. Do not treat those flows as live-verified. When deploying a fresh database, configure the environment variables, run `npm run db:migrate`, and seed or create an administrator only when appropriate for that database.
 
 ## Known limitations
 
@@ -188,5 +185,5 @@ No live demo URL is available yet. Deployment requires an authorized Vercel proj
 
 ## Links
 
-- **Live Demo:** Not deployed yet; a verified URL will be added after deployment.
-- **Source Code:** [GitHub repository](https://github.com/YasserElmongy97-YME/kiln-and-linen-ecommerce)
+- **Live Demo:** https://kiln-and-linen-ecommerce.vercel.app
+- **Source Code:** https://github.com/YasserElmongy97-YME/kiln-and-linen-ecommerce
