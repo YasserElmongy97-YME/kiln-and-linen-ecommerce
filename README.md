@@ -21,7 +21,7 @@ No real money can move: the only payment provider implemented is the sandbox, an
 - Critical order and payment paths use row locks, idempotency keys and guarded state transitions to prevent duplicate or conflicting updates.
 - The payment sandbox signs webhook events with HMAC and verifies signatures using constant-time comparison. It never processes real payments.
 - Administrative pages and APIs enforce server-side role-based authorization.
-- Automated coverage is organized into unit, PostgreSQL integration and HTTP end-to-end suites. Run each suite as documented below; no test count is asserted here.
+- The repository contains 111 declared automated test cases across unit, PostgreSQL integration and HTTP end-to-end suites. In this workspace, all 26 unit tests passed; the database-dependent integration and end-to-end suites were not run because PostgreSQL was unavailable.
 
 ## Stack
 
