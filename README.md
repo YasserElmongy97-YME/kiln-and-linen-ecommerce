@@ -171,7 +171,7 @@ The app needs a Node.js host and PostgreSQL, for example Vercel (or any Node hos
 
 The production app is deployed on Vercel and uses Neon PostgreSQL. Production configuration is stored in Vercel environment variables; no database URL or payment secret is committed to this repository. The production provider is the sandbox, and `APP_URL` is configured for the public HTTPS domain. The live homepage, catalog, product detail, login/registration pages, product API, and name search were checked; the live catalog API returned 12 products.
 
-The live database was already serving catalog data, so this release did not run migration, seed, reset, or administrator-creation commands. Database-backed catalog reads are confirmed, but an authenticated checkout, sandbox payment, order confirmation, and administrator workflow were not completed in production. Do not treat those flows as live-verified. When deploying a fresh database, configure the environment variables, run `npm run db:migrate`, and seed or create an administrator only when appropriate for that database.
+With explicit authorization, a temporary customer account and one test order were created in the live Neon database. The signed-in customer added a Walnut Spoon Set to the cart and completed checkout for $45.00 using the documented successful test card. The confirmation page showed the order as paid, and the customer's order history listed it. The existing administrator account also authenticated successfully; the admin overview and orders page rendered. The administrator overview showed 12 active products and two paid orders at the time of capture. No catalog, order status, or production configuration was edited. No migration, seed, or reset command was run. These are application-flow checks, not a full independent audit of Neon connectivity or migration history. When deploying a fresh database, configure the environment variables, run `npm run db:migrate`, and seed or create an administrator only when appropriate for that database.
 
 ## Known limitations
 
@@ -180,8 +180,8 @@ The live database was already serving catalog data, so this release did not run 
 - The cart requires an account; there is no guest cart.
 - No email notifications, password reset, tax handling or multi-currency (USD only).
 - No real payment provider is integrated.
-- Automated tests do not drive a real browser (browser downloads were unavailable where this was built). The end-to-end suite exercises the running production server over HTTP, including rendered pages, but client-side behavior (hydration, steppers, focus order) and responsive layout were not checked in a browser.
-- No demo video was recorded; a script and checklist are in [docs/DEMO-SCRIPT.md](docs/DEMO-SCRIPT.md).
+- Automated tests do not drive a real browser. This task separately recorded a 66-second browser walkthrough of the production storefront, catalog, admin overview and a privacy-redacted admin order detail, with English narration. The customer checkout and confirmation were verified separately in the browser; the final video does not show the customer checkout page. The recording is delivered with this task and is not committed to the source repository.
+- The production browser walkthrough did not include a customer-visible cart or checkout screen in the final video, although that flow was completed and verified separately during the task. The integration and HTTP end-to-end suites were not run against production.
 
 ## Links
 
