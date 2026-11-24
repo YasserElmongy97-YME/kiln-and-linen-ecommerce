@@ -1,6 +1,6 @@
-# Kiln & Linen
+# Kiln & Linen — Full-Stack E-Commerce Platform
 
-An independent homeware store (ceramics, lighting, textiles, tableware) with a full shopping flow and a **payment sandbox**. Customers browse, search, filter, add to a cart, check out and pay with simulated cards. Administrators manage products, categories and orders.
+Kiln & Linen is a full-stack homeware storefront for ceramics, lighting, textiles and tableware. Built with Next.js, TypeScript and PostgreSQL, it demonstrates an end-to-end commerce workflow—from searchable product discovery and a database-backed cart to transactional order creation, sandbox payments and role-protected administration.
 
 No real money can move: the only payment provider implemented is the sandbox, and the app refuses to start with any other `PAYMENT_PROVIDER`.
 
@@ -14,9 +14,18 @@ No real money can move: the only payment provider implemented is the sandbox, an
 - **Admin**: overview, product CRUD (archive instead of delete), stock and price management, category management, order list and detail, guarded status changes.
 - **Auth**: registration, login, logout, bcrypt password hashing, database-backed sessions, role-based authorization enforced on the server.
 
+## Engineering highlights
+
+- Shopping carts and totals are persisted and recalculated server-side for signed-in customers.
+- PostgreSQL access uses Drizzle ORM; order creation, stock reservation and payment-event handling use database transactions.
+- Critical order and payment paths use row locks, idempotency keys and guarded state transitions to prevent duplicate or conflicting updates.
+- The payment sandbox signs webhook events with HMAC and verifies signatures using constant-time comparison. It never processes real payments.
+- Administrative pages and APIs enforce server-side role-based authorization.
+- Automated coverage is organized into unit, PostgreSQL integration and HTTP end-to-end suites. Run each suite as documented below; no test count is asserted here.
+
 ## Stack
 
-Next.js 16 (App Router) · React 19 · TypeScript (strict) · PostgreSQL · Drizzle ORM · Zod · bcryptjs · plain CSS with design tokens · Vitest.
+Next.js 16 (App Router) · React 19 · TypeScript (strict) · PostgreSQL · Drizzle ORM · HMAC-signed Payment Sandbox · Zod · bcryptjs · plain CSS with design tokens · Vitest.
 
 Why Drizzle instead of Prisma: it is a type-safe SQL-first ORM with generated SQL migrations and no binary engine download, which keeps installs reproducible in restricted environments. Everything else follows the preferred stack.
 
@@ -117,12 +126,12 @@ Integration tests use a real PostgreSQL database. They default to `postgresql://
 
 | Test card | Result |
 | --- | --- |
-| `4242 4242 4242 4242` | Succeeds |
-| `4000 0000 0000 0002` | Declined |
+| `4242 4242 4242 4242` | Successful sandbox payment |
+| `4000 0000 0000 0002` | Declined payment |
 | `4000 0000 0000 9995` | Insufficient funds |
 | any other valid number | Fails ("sandbox accepts only test cards") |
 
-Use any future expiry (`MM/YY`) and any 3 or 4 digit code. Card numbers and codes are validated, used in memory, and never stored; only the last four digits are kept.
+These are sandbox-only test numbers; they do not process real payments. Use expiry `12/28` and CVC `123` for the documented demo scenario (the app accepts a future expiry and a valid 3- or 4-digit code). Card numbers and codes are validated, used in memory, and never stored; only the last four digits are kept.
 
 Swapping in a real provider (for example Stripe test mode) means implementing the `PaymentProvider` interface in `src/server/payments/provider.ts` and pointing the provider's webhook at `/api/payments/webhook`. That integration is **not implemented**.
 
@@ -165,7 +174,7 @@ The app needs a Node.js host and PostgreSQL, for example Vercel (or any Node hos
 3. Build with `npm run build`, start with `npm start` (Vercel detects this automatically).
 4. From a machine that can reach the database, run `npm run db:migrate`, then `npm run db:seed` if you want the sample catalog, then `npm run admin:create`.
 
-No demo URL exists: deploying requires hosting and database credentials that were not available while building this project.
+No live demo URL is available yet. Deployment requires an authorized Vercel project and the real Neon connection string, which are not present in this workspace. Do not treat a local build as a live deployment.
 
 ## Known limitations
 
@@ -176,3 +185,8 @@ No demo URL exists: deploying requires hosting and database credentials that wer
 - No real payment provider is integrated.
 - Automated tests do not drive a real browser (browser downloads were unavailable where this was built). The end-to-end suite exercises the running production server over HTTP, including rendered pages, but client-side behavior (hydration, steppers, focus order) and responsive layout were not checked in a browser.
 - No demo video was recorded; a script and checklist are in [docs/DEMO-SCRIPT.md](docs/DEMO-SCRIPT.md).
+
+## Links
+
+- **Live Demo:** Not deployed yet; a verified URL will be added after deployment.
+- **Source Code:** [GitHub repository](https://github.com/YasserElmongy97-YME/kiln-and-linen-ecommerce)
